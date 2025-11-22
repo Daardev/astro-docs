@@ -5,6 +5,11 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Cancela workflows anteriores si hay uno nuevo
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pages: write
