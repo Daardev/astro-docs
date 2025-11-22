@@ -1,0 +1,97 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const menuItems = [
+  { name: "Inicio", url: base },
+  { name: "Instalación", url: `${base}/instalacion` },
+  { name: "Componentes", url: `${base}/componentes` },
+  { name: "API", url: `${base}/api` }
+];
+---
+
+<!-- Botón hamburguesa (solo móvil) -->
+<button 
+  id="menu-toggle"
+  class="fixed top-4 left-4 z-50 md:hidden bg-zinc-800 text-white p-2 rounded hover:bg-zinc-700 transition-colors"
+  aria-label="Toggle menu"
+>
+  <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+  <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+  </svg>
+</button>
+
+<!-- Overlay oscuro (solo móvil) -->
+<div 
+  id="menu-overlay"
+  class="fixed inset-0 bg-black/50 z-40 md:hidden hidden"
+></div>
+
+<!-- Menú lateral -->
+<nav 
+  id="menu-nav"
+  class="fixed left-0 top-0 w-64 h-full bg-zinc-900 text-white p-5 z-40 
+         transform -translate-x-full md:translate-x-0 transition-transform duration-300"
+>
+  <h2 class="text-xl font-bold mb-4 mt-12 md:mt-0">Documentación</h2>
+  <ul class="space-y-3">
+    {menuItems.map((item) => (
+      <li>
+        <a 
+          class="block hover:text-blue-400 transition-colors" 
+          href={item.url}
+        >
+          {item.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  function initMenu() {
+    let isOpen = false;
+
+    const toggleBtn = document.getElementById('menu-toggle');
+    const nav = document.getElementById('menu-nav');
+    const overlay = document.getElementById('menu-overlay');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    function toggleMenu() {
+      isOpen = !isOpen;
+      
+      if (isOpen) {
+        nav?.classList.remove('-translate-x-full');
+        overlay?.classList.remove('hidden');
+        hamburgerIcon?.classList.add('hidden');
+        closeIcon?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        nav?.classList.add('-translate-x-full');
+        overlay?.classList.add('hidden');
+        hamburgerIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    toggleBtn?.addEventListener('click', toggleMenu);
+    overlay?.addEventListener('click', toggleMenu);
+
+    // Cerrar con tecla ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        toggleMenu();
+      }
+    });
+  }
+
+  // Inicializar en carga inicial
+  initMenu();
+
+  // Reinicializar después de cada transición de página
+  document.addEventListener('astro:after-swap', initMenu);
+</script>
